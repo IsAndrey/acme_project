@@ -2,19 +2,39 @@
 {% load django_bootstrap5 %}
 
 {% block content %}
-  <div class="card col-4">
-    <div class="card-header">
-      Калькулятор ожидания дня рождения
+  {% with data=form.instance %}
+    {% if oper in "Изменить" %}
+      <h1>Редактировать запись {{ data.id }}</h1>
+    {% elif oper in "Удалить" %}
+      <h1>Удаление записи</h1>
+    {% else %}
+      <h1>Новая запись</h1>
+    {% endif %}
+    <div class="card col-4 m-3">
+      <div class="card-header">
+        Калькулятор ожидания дня рождения
+      </div>
+      <div class="card-body">
+        <form method="post">
+          {% csrf_token %}
+          {%if oper in "Удалить" %}
+            <p>{{ data.first_name }} {{data.second_name}}</p>
+            <p>{{ data.bitrhday }}</p>
+          {% else %}
+            {% bootstrap_form form %}
+          {% endif %}
+          {% bootstrap_button button_type="submit" content=oper %}
+        </form>
+      </div>
     </div>
-    <div class="card-body">
-      <form>
-        {% bootstrap_form form %}
-        {% bootstrap_button button_type="submit" content="Отправить" %}
-      </form>
-    </div>
-  </div>
-  {% with data=request.GET %}
-    {% if form.is_valid %}
+    {% if not oper in "Создать" %}
+       ID {% if oper in "Изменить" %} редактируемой
+       {% elif oper in "Удалить" %} удаляемой
+       {% endif %}
+       записи в БД: {{ data.id }} <br>
+    {% endif %} 
+    
+    {% if not oper in "Удалить" and form.is_valid %}
       <h2>Привет, {{ data.first_name }} {{ data.second_name }}</h2>
       {% if birthday_countdown == 0 %}
         С днём варенья!
