@@ -1,5 +1,6 @@
 from django.db import models
 # from django.core.validators import MinValueValidator, MaxValueValidator
+from .valodators import real_age
 
 
 class Birthday(models.Model):
@@ -16,5 +17,19 @@ class Birthday(models.Model):
     )
     birthday = models.DateField(
         verbose_name='Дата рождения',
-        blank=False
+        blank=False,
+        validators=(real_age,)
     )
+    image = models.ImageField(
+        verbose_name='Фото',
+        blank=True,
+        upload_to='birthdays_images'
+    )
+
+    class Meta:
+        contrains = (
+            models.UniqueConstraint(
+                fields='first_name, second_name, birthday',
+                name='Uniqie person constraint',
+            )
+        )

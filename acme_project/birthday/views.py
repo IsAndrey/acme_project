@@ -39,4 +39,3 @@ def birthday_delete(request, pk=None):
         return redirect('birthday:list')
     context = {'form': form, 'oper': oper}
     return render(request, 'birthday/birthday.html', context=context)
-

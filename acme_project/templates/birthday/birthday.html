@@ -3,9 +3,9 @@
 
 {% block content %}
   {% with data=form.instance %}
-    {% if oper in "Изменить" %}
+    {% if oper == "Изменить" %}
       <h1>Редактировать запись {{ data.id }}</h1>
-    {% elif oper in "Удалить" %}
+    {% elif oper == "Удалить" %}
       <h1>Удаление записи</h1>
     {% else %}
       <h1>Новая запись</h1>
@@ -15,7 +15,7 @@
         Калькулятор ожидания дня рождения
       </div>
       <div class="card-body">
-        <form method="post">
+        <form method="post" enctype="multipart/form-data">
           {% csrf_token %}
           {%if oper in "Удалить" %}
             <p>{{ data.first_name }} {{data.second_name}}</p>
@@ -27,8 +27,8 @@
         </form>
       </div>
     </div>
-    {% if not oper in "Создать" %}
-       ID {% if oper in "Изменить" %} редактируемой
+    {% oper != "Создать" %}
+       ID {% if oper == "Изменить" %} редактируемой
        {% elif oper in "Удалить" %} удаляемой
        {% endif %}
        записи в БД: {{ data.id }} <br>
