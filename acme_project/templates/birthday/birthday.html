@@ -17,24 +17,26 @@
       <div class="card-body">
         <form method="post" enctype="multipart/form-data">
           {% csrf_token %}
-          {%if oper in "Удалить" %}
+          {%if oper == "Удалить" %}
             <p>{{ data.first_name }} {{data.second_name}}</p>
             <p>{{ data.bitrhday }}</p>
           {% else %}
             {% bootstrap_form form %}
           {% endif %}
-          {% bootstrap_button button_type="submit" content=oper %}
+          {% if oper != "Создать" or oper == "Создать" and not form.is_valid %}
+            {% bootstrap_button button_type="submit" content=oper %}
+          {% endif %}
         </form>
       </div>
     </div>
-    {% oper != "Создать" %}
+    {% if oper != "Создать" %}
        ID {% if oper == "Изменить" %} редактируемой
-       {% elif oper in "Удалить" %} удаляемой
+       {% elif oper == "Удалить" %} удаляемой
        {% endif %}
        записи в БД: {{ data.id }} <br>
     {% endif %} 
     
-    {% if not oper in "Удалить" and form.is_valid %}
+    {% if oper != "Удалить" and form.is_valid %}
       <h2>Привет, {{ data.first_name }} {{ data.second_name }}</h2>
       {% if birthday_countdown == 0 %}
         С днём варенья!

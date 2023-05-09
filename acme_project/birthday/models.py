@@ -1,6 +1,7 @@
 from django.db import models
+from django.urls import reverse
 # from django.core.validators import MinValueValidator, MaxValueValidator
-from .valodators import real_age
+from .validators import real_age
 
 
 class Birthday(models.Model):
@@ -27,9 +28,12 @@ class Birthday(models.Model):
     )
 
     class Meta:
-        contrains = (
+        constraints = (
             models.UniqueConstraint(
-                fields='first_name, second_name, birthday',
+                fields=('first_name', 'second_name', 'birthday'),
                 name='Uniqie person constraint',
-            )
+            ),
         )
+    
+    def get_absolute_url(self):
+        return reverse('birthday:new_detail', kwargs={'pk':self.pk})

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load django_bootstrap5 %}
+
+{% block content %}
+  ID записи в БД: {{ object.id }} <hr>
+  {% if birthday.image %}
+  <div>
+    <img src="{{ birthday.image.url }}" height="200">
+  </div>
+  {% endif %}
+  
+  <h2>Привет, {{ birthday.first_name }} {{ birthday.second_name }}</h2>
+  {% if birthday_countdown == 0 %}
+    С днём варенья!
+  {% else %}
+    До дня варенья осталось {{ birthday_countdown }} дней.
+  {% endif %}
+{% endblock %}

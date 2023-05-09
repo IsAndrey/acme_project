@@ -1,7 +1,42 @@
+from typing import Any, Dict
 from django.shortcuts import render, get_object_or_404, redirect
+from django.core.paginator import Paginator
 from .forms import BirthdayForm
 from .utils import calculate_birthday_countdown
 from .models import Birthday
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
+from django.urls import reverse_lazy
+
+
+class BirthdayDetailView(DetailView):
+    model = Birthday
+
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context['birthday_countdown'] = calculate_birthday_countdown(
+            self.object.birthday
+        )
+        return context
+
+class BirthdayDeleteView(DeleteView):
+    model = Birthday
+    success_url = reverse_lazy('birthday:new_list')
+
+
+class BirthdayUpdateView(UpdateView):
+    model = Birthday
+    form_class = BirthdayForm
+
+
+class BirthdayCreateView(CreateView):
+    model = Birthday
+    form_class = BirthdayForm
+
+
+class BirthdayListView(ListView):
+    model = Birthday
+    ordering = 'id'
+    paginate_by = 1
 
 
 def birthday(request, pk=None):
@@ -28,8 +63,12 @@ def birthday(request, pk=None):
 
 def birthday_list(request):
     """Отображение страницы birthday_list.html"""
-    birthdays = Birthday.objects.all()
-    context = {'birthdays': birthdays}
+    birthdays = Birthday.objects.order_by('id')
+    paginator = Paginator(birthdays, 1)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    # context = {'birthdays': birthdays}
+    context = {'page_obj': page_obj}
     return render(request, 'birthday/birthday_list.html', context=context)
 
 
